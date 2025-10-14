@@ -8,8 +8,8 @@ import java.util.Date;
 @Data
 public class User {
     int id;
-    String f_name;
-    String l_name;
+    String fName;
+    String lName;
     String email;
     String contact_no;
     String address;

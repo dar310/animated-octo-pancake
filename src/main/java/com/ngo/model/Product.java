@@ -12,7 +12,6 @@ public class Product {
     String name;
     String description;
     String categoryName;
-    String imageFile;
     ProductMediaType mediaType;
     ProductFormat format;
     double price;
@@ -20,4 +19,5 @@ public class Product {
     Date releaseDate;
     String publisher;
     String ratingAge;
+    String imageFile;
 }

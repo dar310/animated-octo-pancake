@@ -1,35 +1,27 @@
 package com.ngo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ngo.enums.UserRole;
+import com.ngo.enums.PaymentMethod;
+import com.ngo.enums.PaymentStatus;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Data
 @Entity
-@Table(name ="user_table")
-public class UserData {
+@Table(name = "payment_data")
+public class PaymentData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
-    String fName;
-    String lName;
-    @Column(unique = true, nullable = false)
-    String email;
-    String contact_no;
-    @Column(columnDefinition = "TEXT")
-    String address;
-    String password;
-    @Enumerated(EnumType.STRING)
-    UserRole role;
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
-    Date birthdate;
-
-
+    int order_id;
+    PaymentMethod method;
+    PaymentStatus status;
+    Date transaction_date;
+    double amount;
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
@@ -38,5 +30,5 @@ public class UserData {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
-    private Date created_at;
+    private Date created;
 }

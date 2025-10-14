@@ -15,7 +15,7 @@ public class OrderItem {
     String productDescription;
     String productCategoryName;
     String productImageFile;
-    double quantity;
+    int quantity;
     double price;
     OrderItemStatus status;
     Date created;

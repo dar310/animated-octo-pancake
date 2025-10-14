@@ -45,11 +45,11 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public List<OrderItem> getOrderItems(Integer customerId) {
+    public List<OrderItem> getOrderItems(Integer userId) {
         List<OrderItemData> orderItemDataRecords = new ArrayList<>();
         List<OrderItem> orderItems =  new ArrayList<>();
 
-        orderItemDataRepository.findAllByCustomerId(customerId).forEach(orderItemDataRecords::add);
+        orderItemDataRepository.findAllByUserId(userId).forEach(orderItemDataRecords::add);
         Iterator<OrderItemData> it = orderItemDataRecords.iterator();
         OrderItem orderItem;
 
@@ -65,12 +65,12 @@ public class OrderItemServiceImpl implements OrderItemService {
 
 
     //@Override
-    public List<OrderItem> getCartItems(Integer customerId) {
+    public List<OrderItem> getCartItems(Integer userId) {
 
         List<OrderItemData> orderItemDataRecords = new ArrayList<>();
         List<OrderItem> orderItems =  new ArrayList<>();
 
-        orderItemDataRepository.findAllByCustomerId(customerId).forEach(orderItemDataRecords::add);
+        orderItemDataRepository.findAllByUserId(userId).forEach(orderItemDataRecords::add);
         Iterator<OrderItemData> it = orderItemDataRecords.iterator();
         OrderItem orderItem;
 

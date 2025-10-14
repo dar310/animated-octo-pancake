@@ -38,7 +38,7 @@ public class OrderItemController {
     }
 
 
-    @RequestMapping("/api/orderitem/{customerId}")
+    @RequestMapping("/api/orderitem/{userId}")
     public ResponseEntity<?> getOrderItems(@PathVariable final Integer customerId, @RequestParam (name="status") Integer status)
     {
         HttpHeaders headers = new HttpHeaders();
