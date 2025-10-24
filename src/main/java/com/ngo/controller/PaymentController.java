@@ -55,7 +55,7 @@ public class PaymentController {
     }
 
     // ✅ Create / Process a new payment
-    @PutMapping("/api/payment")
+    @PostMapping("/api/payment")
     public ResponseEntity<?> processPayment(@RequestBody Payment payment) {
         log.info("Processing new payment >> {}", payment);
         HttpHeaders headers = new HttpHeaders();
@@ -72,12 +72,13 @@ public class PaymentController {
     }
 
     // ✅ Update existing payment
-    @PostMapping("/api/payment")
-    public ResponseEntity<?> updatePayment(@RequestBody Payment payment) {
+    @PutMapping("/api/payment")
+    public ResponseEntity<?> updatePayment(@PathVariable final Integer id, @RequestBody Payment payment) {
         log.info("Updating payment >> {}", payment);
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<?> response;
         try {
+            payment.setId(id);
             Payment updated = paymentService.updatePayment(payment);
             response = ResponseEntity.ok(updated);
         } catch (Exception ex) {

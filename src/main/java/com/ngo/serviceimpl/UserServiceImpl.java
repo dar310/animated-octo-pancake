@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Slf4j
@@ -98,16 +99,21 @@ public User get(Integer id) {
 
     @Override
     public User update(User user) {
-        Optional<UserData> optional  = userDataRepository.findById(user.getId());
-        if(optional.isPresent()){
-            UserData userData = transformUser.transform(user);
-            UserData updaatedUserData = userDataRepository.save( userData);
-            return transformUserData.transform(updaatedUserData);
+        Optional<UserData> optional = userDataRepository.findById(user.getId());
+        if (optional.isPresent()) {
+            UserData existing = optional.get();
+
+            UserData updated = transformUser.transform(user);
+
+            updated.setId(existing.getId());
+            updated.setCreated_at(existing.getCreated_at());
+
+            UserData saved = userDataRepository.save(updated);
+            return transformUserData.transform(saved);
+        } else {
+            log.error("User record with id: {} does not exist", user.getId());
+            return null;
         }
-        else {
-            log.error("User record with id: {} do not exist",user.getId());
-        }
-        return null;
     }
     @Override
     public void delete(Integer id) {
@@ -122,4 +128,50 @@ public User get(Integer id) {
             log.error(" Unable to locate user with id: {}", id);
         }
     }
+    @Override
+    public User partialUpdate(Integer id, Map<String, Object> updates) {
+        Optional<UserData> optional = userDataRepository.findById(id);
+
+        if (optional.isEmpty()) {
+            log.warn("User with id {} not found for PATCH", id);
+            return null;
+        }
+
+        UserData existing = optional.get();
+
+        updates.forEach((field, value) -> {
+            try {
+                Field declaredField = UserData.class.getDeclaredField(field);
+                declaredField.setAccessible(true);
+
+                // Special case: handle enums
+                if (declaredField.getType().isEnum()) {
+                    Object enumValue = Enum.valueOf((Class<Enum>) declaredField.getType(), value.toString());
+                    declaredField.set(existing, enumValue);
+                }
+                // Handle date strings
+                else if (declaredField.getType().equals(Date.class) && value instanceof String) {
+                    try {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                        declaredField.set(existing, sdf.parse(value.toString()));
+                    } catch (Exception e) {
+                        log.warn("Invalid date format for field {}: {}", field, value);
+                    }
+                }
+                // Default case
+                else {
+                    declaredField.set(existing, value);
+                }
+
+            } catch (NoSuchFieldException e) {
+                log.warn("Unknown field '{}' ignored for user {}", field, id);
+            } catch (IllegalAccessException e) {
+                log.error("Failed to set field '{}' for user {}: {}", field, id, e.getMessage());
+            }
+        });
+
+        UserData saved = userDataRepository.save(existing);
+        return transformUserData.transform(saved);
+    }
+
 }

@@ -5,7 +5,7 @@ services:
     container_name: mysql1
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: ecom
+      MYSQL_DATABASE: gamemediastore
       MYSQL_USER: mysqluser
       MYSQL_PASSWORD: password
     ports:
@@ -15,12 +15,12 @@ services:
       - ./db:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - ecomnet
-  ecommerce1:
-    image: ecommercee:latest
-    container_name: ecommerce_1
+      - gamemediastorenet
+  gamemediastore-container:
+    image: gamemediastore-img:latest
+    container_name: gamemediastore-container
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/ecom
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/gamemediastore
       SPRING_DATASOURCE_USERNAME: mysqluser
       SPRING_DATASOURCE_PASSWORD: password
     ports:
@@ -28,16 +28,16 @@ services:
     depends_on:
       - mysqldb
     networks:
-      - ecomnet
-  ecommerceapp:
+      - gamemediastorenet
+  gamemedaistoreapp:
     image: ng-docker-app:latest
     container_name: ng-docker-app
     ports:
       - "4200:80"
     depends_on:
-      - ecommerce1
+      - gamemediastore-container
     networks:
-      - ecomnet
+      - gamemediastorenet
 networks:
-  ecomnet:
+  gamemediastorenet:
     driver: bridge

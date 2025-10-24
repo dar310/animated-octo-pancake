@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Slf4j
@@ -148,4 +149,30 @@ public class ProductServiceImpl implements ProductService {
             log.error(" Unable to locate product with id: {}", id);
         }
     }
+
+    @Override
+    public Product partialUpdate(Integer id, Map<String, Object> updates) {
+        Optional<ProductData> optional = productDataRepository.findById(id);
+        if (optional.isEmpty()) {
+            throw new RuntimeException("Product with ID " + id + " not found");
+        }
+
+        ProductData existing = optional.get();
+
+        // Apply only the provided updates
+        updates.forEach((field, value) -> {
+            try {
+                Field declaredField = ProductData.class.getDeclaredField(field);
+                declaredField.setAccessible(true);
+                declaredField.set(existing, value);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                log.warn("Could not update field '{}': {}", field, e.getMessage());
+            }
+        });
+
+
+        ProductData saved = productDataRepository.save(existing);
+        return transformProductData.transform(saved);
+    }
+
 }

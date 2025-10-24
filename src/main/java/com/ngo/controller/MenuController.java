@@ -34,7 +34,7 @@ public class MenuController {
         }
         return response;
     }
-    @PutMapping("/api/menu")
+    @PostMapping("/api/menu")
     public ResponseEntity<?> add(@RequestBody Menu menu){
         log.info("Input >> " + menu.toString() );
         HttpHeaders headers = new HttpHeaders();

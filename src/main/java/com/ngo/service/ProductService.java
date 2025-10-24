@@ -15,4 +15,6 @@ public interface ProductService {
     void delete(Integer id);
     Map<String, List<Product>> getCategoryMappedProducts();
     List<ProductCategory> listProductCategories();
+    Product partialUpdate(Integer id, Map<String, Object> updates);
+
 }

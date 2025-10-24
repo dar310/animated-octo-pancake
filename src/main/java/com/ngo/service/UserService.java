@@ -3,6 +3,7 @@ package com.ngo.service;
 import com.ngo.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     List<User> getAllUsers();
@@ -11,5 +12,6 @@ public interface UserService {
     User create(User user);
     User update(User user);
     void delete(Integer id);
+    User partialUpdate(Integer id, Map<String, Object> updates);
 
 }

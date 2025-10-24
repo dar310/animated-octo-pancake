@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -17,26 +18,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-//
-//    @RequestMapping("/api/user")
-//    public ResponseEntity<?> getUserCategories()
-//    {
-//        HttpHeaders headers = new HttpHeaders();
-//        ResponseEntity<?> response;
-//        try {
-//            List<UserCategory> mappedUsers = userService.listUserCategories();
-//            //Map<String,List<User>> mappedUsers = userService.getCategoryMappedUsers();
-//            log.warn("User Categories Count:::::::" + mappedUsers.size());
-//            response = ResponseEntity.ok(mappedUsers);
-//        }
-//        catch( Exception ex)
-//        {
-//            log.error("Failed to retrieve user with id : {}", ex.getMessage(), ex);
-//            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-//        }
-//        return response;
-//    }
-    @GetMapping("/api/users")
+
+    @GetMapping("/api/user")
     public ResponseEntity<?> getAllUsers() {
         log.info("Fetching all users...");
         HttpHeaders headers = new HttpHeaders();
@@ -55,7 +38,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/api/user")
+    @PostMapping("/api/user")
     public ResponseEntity<?> add(@RequestBody User user){
         log.info("Input >> " + user.toString() );
         HttpHeaders headers = new HttpHeaders();
@@ -72,18 +55,38 @@ public class UserController {
         }
         return response;
     }
-    @PostMapping("/api/user")
-    public ResponseEntity<?> update(@RequestBody User user){
+    @PatchMapping("/api/user/{id}")
+    public ResponseEntity<?> partialUpdateUser(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+        log.info("PATCH request for user id {} with updates: {}", id, updates);
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<?> response;
+
+        try {
+            User updatedUser = userService.partialUpdate(id, updates);
+            if (updatedUser != null) {
+                response = ResponseEntity.ok(updatedUser);
+            } else {
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+            }
+        } catch (Exception ex) {
+            log.error("Failed to partially update user {}: {}", id, ex.getMessage(), ex);
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+        return response;
+    }
+    @PutMapping("/api/user/{id}")
+    public ResponseEntity<?> update(@PathVariable final Integer id, @RequestBody User user){
         log.info("Update Input >> user.toString() ");
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<?> response;
         try {
-            User newUser = userService.update(user);
-            response = ResponseEntity.ok(user);
-        }
-        catch( Exception ex)
-        {
-            log.error("Failed to retrieve user with id : {}", ex.getMessage(), ex);
+            // Force the correct ID (from URL, not payload)
+            user.setId(id);
+
+            User updatedUser = userService.update(user);
+            response = ResponseEntity.ok(updatedUser);
+        } catch (Exception ex) {
+            log.error("Failed to update user with id {}: {}", id, ex.getMessage(), ex);
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
         return response;

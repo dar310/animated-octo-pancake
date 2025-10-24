@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -39,7 +40,7 @@ public class ProductController {
         return response;
     }
 
-    @PutMapping("/api/product")
+    @PostMapping("/api/product")
     public ResponseEntity<?> add(@RequestBody Product product){
         log.info("Input >> " + product.toString() );
         HttpHeaders headers = new HttpHeaders();
@@ -56,7 +57,21 @@ public class ProductController {
         }
         return response;
     }
-    @PostMapping("/api/product")
+    @PatchMapping("/api/product/{id}")
+    public ResponseEntity<?> partialUpdate(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+        log.info("Partial update for product ID {} with fields {}", id, updates);
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<?> response;
+        try {
+            Product updatedProduct = productService.partialUpdate(id, updates);
+            response = ResponseEntity.ok(updatedProduct);
+        } catch (Exception ex) {
+            log.error("Failed to patch product {}: {}", id, ex.getMessage(), ex);
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+        return response;
+    }
+    @PutMapping("/api/product")
     public ResponseEntity<?> update(@RequestBody Product product){
         log.info("Update Input >> product.toString() ");
         HttpHeaders headers = new HttpHeaders();

@@ -61,7 +61,7 @@ public class OrderItemController {
         return response;
     }
 
-    @PutMapping("/api/orderitem")
+    @PostMapping("/api/orderitem")
     public ResponseEntity<?> add(@RequestBody OrderItem orderItem){
         log.info("Input >> " + orderItem.toString() );
         HttpHeaders headers = new HttpHeaders();
@@ -79,7 +79,7 @@ public class OrderItemController {
         return response;
     }
 
-    @PutMapping("/api/orderitems")
+    @PostMapping("/api/orderitems")
     public ResponseEntity<?> add(@RequestBody List<OrderItem> orderItems){
         log.info("Input >> " + orderItems.toString() );
         HttpHeaders headers = new HttpHeaders();
@@ -97,7 +97,7 @@ public class OrderItemController {
         return response;
     }
 
-    @PostMapping("/api/orderitem")
+    @PutMapping("/api/orderitem")
     public ResponseEntity<?> update(@RequestBody OrderItem orderItem){
         log.info("Update Input >> orderItem.toString() ");
         HttpHeaders headers = new HttpHeaders();
