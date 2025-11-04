@@ -9,7 +9,8 @@ public class OrderItem {
     int id;
     int orderId;
     int userId;
-    String userName;
+    String user_fName;
+    String user_lName;
     int productId;
     String productName;
     String productDescription;

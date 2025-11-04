@@ -4,6 +4,6 @@ import java.util.List;
 
 public class Order {
     int id;
-    String customerId;
+    String userId;
     List<OrderItem> items;
 }

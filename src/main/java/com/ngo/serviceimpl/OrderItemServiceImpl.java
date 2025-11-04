@@ -46,20 +46,15 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public List<OrderItem> getOrderItems(Integer userId) {
-        List<OrderItemData> orderItemDataRecords = new ArrayList<>();
-        List<OrderItem> orderItems =  new ArrayList<>();
+        List<OrderItem> orderItems = new ArrayList<>();
 
-        orderItemDataRepository.findAllByUserId(userId).forEach(orderItemDataRecords::add);
-        Iterator<OrderItemData> it = orderItemDataRecords.iterator();
-        OrderItem orderItem;
-
-        while(it.hasNext()) {
-            OrderItemData orderItemData = it.next();
-            if(orderItemData.getStatus() == OrderItemStatus.Ordered) {
-                orderItem = transformOrderItemData.transform(orderItemData);
-                orderItems.add(orderItem);
+        orderItemDataRepository.findAllByUserId(userId).forEach(orderItemData -> {
+            // Return everything EXCEPT Created (status = 0)
+            if(orderItemData.getStatus() != OrderItemStatus.Created) {
+                orderItems.add(transformOrderItemData.transform(orderItemData));
             }
-        }
+        });
+
         return orderItems;
     }
 

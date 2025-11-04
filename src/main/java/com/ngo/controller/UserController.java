@@ -1,5 +1,6 @@
 package com.ngo.controller;
 
+import com.ngo.entity.UserData;
 import com.ngo.model.User;
 import com.ngo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -122,4 +124,18 @@ public class UserController {
         }
         return response;
     }
+    @PostMapping("/api/login")
+    public ResponseEntity<User> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
+        User user = userService.login(email, password);
+        if (user != null) {
+            user.setPassword(null); // don’t expose password in response
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
 }

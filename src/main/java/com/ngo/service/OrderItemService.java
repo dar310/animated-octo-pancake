@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface OrderItemService {
     List<OrderItem> getAll();
-    List<OrderItem> getOrderItems(Integer customerId);
-    List<OrderItem> getCartItems(Integer customerId);
+    List<OrderItem> getOrderItems(Integer userId);
+    List<OrderItem> getCartItems(Integer userId);
     OrderItem create(OrderItem orderItem);
     List<OrderItem> create(List<OrderItem> orderItems);
     OrderItem update(OrderItem orderItem);

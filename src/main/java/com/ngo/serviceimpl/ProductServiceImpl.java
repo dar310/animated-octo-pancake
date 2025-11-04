@@ -1,6 +1,8 @@
 package com.ngo.serviceimpl;
 
+import com.ngo.entity.PaymentData;
 import com.ngo.entity.ProductData;
+import com.ngo.model.Payment;
 import com.ngo.model.Product;
 import com.ngo.model.ProductCategory;
 import com.ngo.repository.ProductDataRepository;
@@ -83,21 +85,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product[] getAll() {
-            List<ProductData> productsData = new ArrayList<>();
-            List<Product> products = new ArrayList<>();
-            productDataRepository.findAll().forEach(productsData::add);
-            Iterator<ProductData> it = productsData.iterator();
-            while(it.hasNext()) {
-                ProductData productData = it.next();
-                Product product =  transformProductData.transform(productData);
-                products.add(product);
-            }
-            Product[] array = new Product[products.size()];
-            for  (int i=0; i<products.size(); i++){
-                array[i] = products.get(i);
-            }
-            return array;
+        List<ProductData> productsData = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
+        productDataRepository.findAll().forEach(productsData::add);
+        Iterator<ProductData> it = productsData.iterator();
+        while(it.hasNext()) {
+            ProductData productData = it.next();
+            Product product =  transformProductData.transform(productData);
+            products.add(product);
         }
+        Product[] array = new Product[products.size()];
+        for  (int i=0; i<products.size(); i++){
+            array[i] = products.get(i);
+        }
+        return array;
+    }
     @Override
     public Product get(Integer id) {
         log.info(" Input id >> "+  Integer.toString(id) );
@@ -105,9 +107,11 @@ public class ProductServiceImpl implements ProductService {
         Optional<ProductData> optional = productDataRepository.findById(id);
         if(optional.isPresent()) {
             log.info(" Is present >> ");
-            product = new Product();
-            product.setId(optional.get().getId());
-            product.setName(optional.get().getName());
+//            product = new Product();
+//            product.setId(optional.get().getId());
+//            product.setName(optional.get().getName());
+            product = transformProductData.transform(optional.get());
+
         }
         else {
             log.info(" Failed >> unable to locate id: " +  Integer.toString(id)  );

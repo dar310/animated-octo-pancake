@@ -38,18 +38,22 @@ public class OrderItemController {
     }
 
 
-    @RequestMapping("/api/orderitem/{userId}")
-    public ResponseEntity<?> getOrderItems(@PathVariable final Integer customerId, @RequestParam (name="status") Integer status)
+    @GetMapping("/api/orderitem/{userId}")
+    public ResponseEntity<?> getOrderItems(@PathVariable final Integer userId, @RequestParam (name="status") Integer status)
     {
+        log.info("=== START: userId={}, status={}", userId, status);
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<?> response;
         try {
             if(status == 0) {
-                List<OrderItem> orderItems = orderItemService.getCartItems(customerId);
+                List<OrderItem> orderItems = orderItemService.getCartItems(userId);
+
                 response = ResponseEntity.ok( orderItems);
             }
             else {
-                List<OrderItem> orderItems = orderItemService.getOrderItems(customerId);
+                List<OrderItem> orderItems = orderItemService.getOrderItems(userId);
+                log.info("Calling getOrderItems");
+                log.info("Service returned: {} items", orderItems.size());
                 response = ResponseEntity.ok( orderItems);
             }
         }

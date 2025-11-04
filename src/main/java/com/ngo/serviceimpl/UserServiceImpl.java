@@ -173,5 +173,35 @@ public User get(Integer id) {
         UserData saved = userDataRepository.save(existing);
         return transformUserData.transform(saved);
     }
+    @Override
+    public User findByEmail(String email) {
+        log.info("Finding user by email: {}", email);
+        Optional<UserData> optional = userDataRepository.findByEmail(email);
+
+        if (optional.isPresent()) {
+            User user = transformUserData.transform(optional.get());
+            return user; // includes password field
+        } else {
+            log.warn("User not found for email: {}", email);
+            return null;
+        }
+    }
+
+    @Override
+    public User login(String email, String password) {
+        User user = findByEmail(email);
+
+        if (user != null && user.getPassword().equals(password)) {
+            log.info("Login successful for {}", email);
+            return user;
+        } else {
+            log.warn("Login failed for {}", email);
+            return null;
+        }
+    }
+
+
+
+
 
 }
